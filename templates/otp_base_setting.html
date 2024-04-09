@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  <nav>
+    {{ macros.m_tab_head_start() }}
+      {{ macros.m_tab_head('otpsetting', 'OTP등록설정', true) }}
+      {{ macros.m_tab_head('api', 'API안내', false) }}
+    {{ macros.m_tab_head_end() }}
+  </nav>
+  <form id='setting' name='setting'>
+  <div class="tab-content" id="nav-tabContent">
+  {{ macros.m_tab_content_start('otpsetting', true) }}
+   {{ macros.setting_input_text('otp_name', 'OTP이름', desc=["GoogleOTP 등록시 명칭"],value=arg['otp_name']) }}
+   {{ macros.setting_input_text('data_path', '데이터저장경로', desc=["데이터저장 경로"],value=arg['data_path']) }}
+   {{ macros.setting_input_text_and_buttons('register_template_path', '등록화면설정', [['path_register_template_btn', '파일선택'],['globalEditBtn', '편집하기', [['file', arg['register_template_path']]]],['preview_register_template', '미리보기']], value=arg['register_template_path'], desc=['사용자 인증 등록 화면 설정하기']) }}
+   {{ macros.setting_input_text_and_buttons('validate_template_path', '인증화면설정', [['path_validate_template_btn', '파일선택'],['globalEditBtn', '편집하기', [['file', arg['validate_template_path']]]],['preview_validate_template', '미리보기']], value=arg['validate_template_path'], desc=['사용자 인증 화면 설정하기']) }}
+  {{ macros.m_tab_content_end() }}
+  {{ macros.m_tab_content_start('api', false) }}
+   {{ macros.info_text_go('api_regist', 'OTP 발급 및 등록 API', desc=["사용자 등록후 안내 할 URL 주소"],value=arg['register_url']) }}
+   {{ macros.info_text_go('api_validate', 'OTP 인증 API', desc=["인증서버에서연동할 API URL"],value=arg['validate_url']) }}
+  {{ macros.m_tab_content_end() }}
+  </div>
+  </form>
+</div> <!--전체-->
+
+<!-- 템플릿 미리보기용 모달 --> 
+<div class="modal fade" id="preview_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="preview_title"></h4>
+      </div>
+      <div class="modal-body" id="modal_body" style="word-break:break-all;padding:0.5rem;">
+        <span id="html_preview"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: END -->
+
+
+<script type="text/javascript">
+$("body").on('click', '#path_register_template_btn', function(e){ 
+  e.preventDefault();
+  globalSelectLocalFile("업로드 폴더 선택", $('#register_template_path').val(), function(ret) {
+    $('#register_template_path').val(ret);
+  });
+});
+
+$("body").on('click', '#path_validate_template_btn', function(e){ 
+  e.preventDefault();
+  globalSelectLocalFile("업로드 폴더 선택", $('#validate_template_path').val(), function(ret) {
+    $('#validate_template_path').val(ret);
+  });
+});
+
+$("body").on('click', '#preview_register_template,#preview_validate_template', function(e){
+  e.preventDefault();
+  var ttype = $(this).attr('id').split('_')[1];
+  globalSendCommand('preview_template', ttype, null, null, function(ret) {
+    if (ret.ret == 'success')  {
+      if (ttype == 'register') {
+        var title = '사용자 인증화면 미리보기';
+      } else {
+        var title = 'OTP 검증화면 미리보기';
+      }
+      document.getElementById("preview_title").textContent = title;
+      document.getElementById("html_preview").innerHTML = ret.data;
+      $("#preview_modal").modal();
+    } else {
+      notify(ret.data, 'warning');
+    }
+  });
+});
+
+
+
+</script>    
+{% endblock %}

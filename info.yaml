@@ -1,0 +1,7 @@
+title: "Wikim OTP"
+version: "1.0.0"
+package_name: "otp"
+developer: "orial"
+description: "세계김치연구소 OTP 플러그인"
+home: "https://github.com/wikimcert/otp"
+more: "https://raw.githubusercontent.com/wikimcert/otp/main/README.md"
