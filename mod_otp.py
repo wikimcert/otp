@@ -24,7 +24,7 @@ class ModuleOtp(PluginModuleBase):
         logger.info(f'[{self.name}] process_command: {command}, {arg1}, {req}')
 
         if command == 'register_user':
-            ret = self.registert_user(P.logic.arg_to_dict(arg1))
+            ret = self.register_user(P.logic.arg_to_dict(arg1))
         elif command == 'modify_user':
             ret = self.modify_user(P.logic.arg_to_dict(arg1))
         elif command == 'auth_list':
@@ -51,7 +51,7 @@ class ModuleOtp(PluginModuleBase):
         logger.info(f'[{self.name}] req({req}, {req.args})')
         return render_template(f'{self.P.package_name}_{self.name}_{page}.html', arg=arg)
 
-    def registert_user(self, req):
+    def register_user(self, req):
         try:
             name = req['name']
             company = req['company']
